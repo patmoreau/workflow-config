@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@4
+        uses: actions/checkout@v4
 
       # Don't waste time starting Renovate if JSON is invalid
       - name: Validate Renovate JSON
@@ -26,14 +26,14 @@ jobs:
 
       - name: Get token
         id: get_token
-        uses: tibdex/github-app-token@2
+        uses: tibdex/github-app-token@v1.7.0
         with:
           app_id: ${{ secrets.DRIFTER_APPS_BOT_APP_ID }}
           installation_id: ${{ secrets.DRIFTER_APPS_BOT_INSTALLATION_ID }}
           private_key: ${{ secrets.DRIFTER_APPS_BOT_PRIVATE_KEY }}
 
       - name: Self-hosted Renovate
-        uses: renovatebot/github-action@40
+        uses: renovatebot/github-action@v40.0.2
         env:
           # Repository taken from variable to keep configuration file generic
           RENOVATE_REPOSITORIES: ${{ github.repository }}

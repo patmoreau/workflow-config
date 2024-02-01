@@ -2,33 +2,42 @@
   "baseBranches": ["main"],
   "rebaseWhen": "conflicted",
   "labels": ["dependencies"],
-  "automergeStrategy": "merge-commit",
+  "automergeStrategy": "squash",
   "ignoreTests": true,
+  "prConcurrentLimit": 5,
   "packageRules": [
     {
       "matchManagers": ["dockerfile"],
       "matchPackagePatterns": ["alpine"],
-      "separateMinorPatch": true
+      "separateMinorPatch": true,
+      "groupName": "dockerfile updates",
+      "groupSlug": "dockerfile-updates"
     },
     {
       "matchManagers": ["dockerfile"],
       "matchPackagePatterns": ["alpine"],
       "matchUpdateTypes": ["patch"],
-      "automerge": true,
-      "schedule": ["every weekend after 4am"]
+      "automerge": false,
+      "schedule": ["every weekend after 4am"],
+      "groupName": "dockerfile updates",
+      "groupSlug": "dockerfile-updates"
     },
     {
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true,
+      "automerge": false,
       "pinDigests": true,
-      "schedule": ["every weekend after 4am"]
+      "schedule": ["every weekend after 4am"],
+      "groupName": "github-actions updates",
+      "groupSlug": "github-actions-updates"
     },
     {
       "matchManagers": ["nuget"],
       "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true,
-      "schedule": ["every weekend after 4am"]
+      "automerge": false,
+      "schedule": ["every weekend after 4am"],
+      "groupName": "nuget updates",
+      "groupSlug": "nuget-updates"
     }
   ]
 }
