@@ -1,33 +1,19 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:js-app", ":maintainLockFilesWeekly"],
   "baseBranches": ["main"],
   "rebaseWhen": "conflicted",
   "labels": ["dependencies"],
+  "assignees": ["patmoreau"],
   "automergeStrategy": "squash",
-  "ignoreTests": true,
+  "ignoreTests": false,
   "prConcurrentLimit": 5,
   "packageRules": [
-    {
-      "matchManagers": ["dockerfile"],
-      "matchPackagePatterns": ["alpine"],
-      "separateMinorPatch": true,
-      "groupName": "dockerfile updates",
-      "groupSlug": "dockerfile-updates"
-    },
-    {
-      "matchManagers": ["dockerfile"],
-      "matchPackagePatterns": ["alpine"],
-      "matchUpdateTypes": ["patch"],
-      "automerge": false,
-      "schedule": ["every weekend after 4am"],
-      "groupName": "dockerfile updates",
-      "groupSlug": "dockerfile-updates"
-    },
     {
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": false,
       "pinDigests": true,
-      "schedule": ["every weekend after 4am"],
       "groupName": "github-actions updates",
       "groupSlug": "github-actions-updates"
     },
@@ -35,7 +21,6 @@
       "matchManagers": ["nuget"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": false,
-      "schedule": ["every weekend after 4am"],
       "groupName": "nuget updates",
       "groupSlug": "nuget-updates"
     }
