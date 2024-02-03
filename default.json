@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:js-app", ":maintainLockFilesWeekly"],
+  "extends": ["config:base"],
   "baseBranches": ["main"],
   "rebaseWhen": "conflicted",
   "labels": ["dependencies"],
@@ -10,19 +10,11 @@
   "prConcurrentLimit": 5,
   "packageRules": [
     {
-      "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": false,
-      "pinDigests": true,
-      "groupName": "github-actions updates",
-      "groupSlug": "github-actions-updates"
-    },
-    {
       "matchManagers": ["nuget"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": false,
-      "groupName": "nuget updates",
-      "groupSlug": "nuget-updates"
+      "matchUpdateTypes": ["major"],
+      "matchPackageNames": ["Microsoft.EntityFrameworkCore"],
+      "matchCurrentVersion": "^7",
+      "enabled": false
     }
   ]
 }
