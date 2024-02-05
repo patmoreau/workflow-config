@@ -1,28 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:js-app", ":maintainLockFilesWeekly"],
+  "extends": ["config:best-practices", ":assignee(@patmoreau)", ":reviewer(@patmoreau)"],
   "baseBranches": ["main"],
   "rebaseWhen": "conflicted",
   "labels": ["dependencies"],
-  "assignees": ["patmoreau"],
   "automergeStrategy": "squash",
   "ignoreTests": false,
-  "prConcurrentLimit": 5,
-  "packageRules": [
-    {
-      "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": false,
-      "pinDigests": true,
-      "groupName": "github-actions updates",
-      "groupSlug": "github-actions-updates"
-    },
-    {
-      "matchManagers": ["nuget"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": false,
-      "groupName": "nuget updates",
-      "groupSlug": "nuget-updates"
-    }
-  ]
+  "prConcurrentLimit": 5
 }

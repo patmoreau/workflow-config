@@ -12,6 +12,7 @@
         "[yaml]": {
             "editor.defaultFormatter": "esbenp.prettier-vscode",
             "editor.formatOnSave": true
-        } 
+		},
+		"WhiteSource Advise.Diff.BaseBranch": "main"
 	}
 }
