@@ -6,13 +6,5 @@
   "labels": ["dependencies"],
   "automergeStrategy": "squash",
   "ignoreTests": false,
-  "prConcurrentLimit": 5,
-  "packageRules": [
-    {
-      "matchUpdateTypes": ["major"],
-      "matchPackagePatterns": ["^Microsoft.EntityFrameworkCore"],
-      "matchCurrentVersion": "^7",
-      "enabled": false
-    }
-  ]
+  "prConcurrentLimit": 5
 }
