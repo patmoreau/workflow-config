@@ -1,12 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:best-practices", ":assignee(@patmoreau)", ":reviewer(@patmoreau)"],
+  "extends": ["config:best-practices"],
   "baseBranches": ["main"],
   "rebaseWhen": "conflicted",
   "labels": ["dependencies"],
   "automergeStrategy": "squash",
   "ignoreTests": false,
   "prConcurrentLimit": 5,
+  "requiredStatusChecks": true,
   "packageRules": [
     {
       "matchUpdateTypes": ["major"],
