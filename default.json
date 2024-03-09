@@ -4,18 +4,10 @@
   "baseBranches": ["main"],
   "rebaseWhen": "conflicted",
   "labels": ["dependencies"],
+  "automerge": true,
   "automergeStrategy": "squash",
+  "automergeType": "pr",
   "ignoreTests": false,
   "prConcurrentLimit": 5,
-  "requiredStatusChecks": true,
-  "packageRules": [
-    {
-      "matchUpdateTypes": ["major"],
-      "enabled": false
-    },
-    {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "automerge": true
-    }
-  ]
+  "requiredStatusChecks": true
 }
