@@ -1,11 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:best-practices"],
+  "extends": ["config:base"],
   "baseBranches": ["main"],
   "rebaseWhen": "conflicted",
   "labels": ["dependencies"],
   "automerge": true,
-  "automergeStrategy": "squash",
+  "automergeStrategy": "merge-commit",
   "automergeType": "pr",
   "ignoreTests": false,
   "prConcurrentLimit": 5,
