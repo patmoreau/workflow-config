@@ -11,7 +11,6 @@ on:
     outputs:
       code_was_changed:
         value: ${{ steps.check_changes.outputs.code_was_changed }}
-        type: boolean
         description: "Whether code was changed"
 
 jobs:
