@@ -2,9 +2,6 @@ name: check-for-code-changes
 on:
   workflow_call:
     inputs:
-      base_ref:
-        required: true
-        type: string
       file_patterns:
         required: true
         type: string
@@ -24,7 +21,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          # ref: ${{ github.head_ref }}
 
       - name: Set variables
         id: set_vars
@@ -36,9 +32,6 @@ jobs:
             echo "base_sha=${{ github.event.before }}" >> $GITHUB_OUTPUT
             echo "head_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
           fi
-
-      # - name: Fetch base branch
-      #   run: git fetch origin ${{ github.sha }}
 
       - name: Check for changes
         run: echo "CHANGED=$(git diff --name-only ${{ steps.set_vars.outputs.base_sha }}..${{ steps.set_vars.outputs.head_sha }} | tr '\n' ',')" >> $GITHUB_ENV
