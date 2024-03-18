@@ -1,0 +1,44 @@
+name: check-for-code-changes
+on:
+  workflow_call:
+    inputs:
+      base_ref:
+        required: true
+        type: string
+      file_patterns:
+        required: true
+        type: string
+    outputs:
+      code_was_changed:
+        value: ${{ steps.check_changes.outputs.code_was_changed }}
+        description: "Whether code was changed"
+
+jobs:
+  check_changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+
+      - name: Fetch base branch
+        run: git fetch origin ${{ inputs.base_ref }}
+
+      - name: Check for changes
+        id: diff_changes
+        run: echo "changed=$(git diff --name-only origin/${{ inputs.base_ref }}..HEAD | tr '\n' ',')" >> $GITHUB_ENV
+
+      - name: Check for code changes
+        id: check_changes
+        run: |
+          echo "$changed"
+          IFS=',' read -ra ADDR <<< "$changed"
+          for i in "${ADDR[@]}"; do
+            if [[ $i =~ ${{ inputs.file_patterns }} ]]; then
+              echo "code_was_changed=true" >> $GITHUB_ENV
+              exit 0
+            fi
+          done
+          echo "code_was_changed=false" >> $GITHUB_ENV
