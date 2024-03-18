@@ -1,0 +1,22 @@
+name: ci-cd
+
+on:
+  push:
+    branches: [main]
+
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  check_changes:
+    uses: patmoreau/renovate-config/.github/workflows/check-changes-action.yml
+    with:
+      base_ref: ${{ github.base_ref }}
+      file_patterns: '**/*'

@@ -30,7 +30,7 @@ jobs:
         run: git fetch origin ${{ inputs.base_ref }}
 
       - name: Check for changes
-        run: echo "CHANGED=$(git diff --name-only origin/${{ inputs.base_ref }}..HEAD | tr '\n' ',')" >> $GITHUB_ENV
+        run: echo "CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | tr '\n' ',')" >> $GITHUB_ENV
 
       - name: Check for code changes
         id: check_changes
