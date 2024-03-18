@@ -19,4 +19,4 @@ jobs:
     uses: patmoreau/renovate-config/.github/workflows/check-changes-action.yml@add-ci-cd-workflow
     with:
       base_ref: ${{ github.base_ref }}
-      file_patterns: '**/*'
+      file_patterns: '.*'
