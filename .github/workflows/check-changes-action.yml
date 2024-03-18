@@ -10,12 +10,15 @@ on:
         type: string
     outputs:
       code_was_changed:
-        value: ${{ jobs.check_changes.steps.check_changes.outputs.code_was_changed }}
+        value: ${{ jobs.check_changes.outputs.code_was_changed }}
         description: "Whether code was changed"
 
 jobs:
   check_changes:
     runs-on: ubuntu-latest
+    outputs:
+      code_was_changed: ${{ steps.check_changes.outputs.code_was_changed }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,6 +45,6 @@ jobs:
           done
           echo "code_was_changed=false" >> $GITHUB_OUTPUT
 
-      - name: Use output
+      - name: Code was changed
         run: |
           echo "The code was changed: ${{ steps.check_changes.outputs.code_was_changed }}"
