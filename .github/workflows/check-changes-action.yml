@@ -26,11 +26,22 @@ jobs:
           fetch-depth: 0
           # ref: ${{ github.head_ref }}
 
+      - name: Set variables
+        id: set_vars
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "base_sha=${{ github.event.pull_request.base.sha }}" >> $GITHUB_OUTPUT
+            echo "head_sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "base_sha=${{ github.event.before }}" >> $GITHUB_OUTPUT
+            echo "head_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+
       # - name: Fetch base branch
       #   run: git fetch origin ${{ github.sha }}
 
       - name: Check for changes
-        run: echo "CHANGED=$(git diff --name-only ${{ github.event.before }}..${{ github.sha }} | tr '\n' ',')" >> $GITHUB_ENV
+        run: echo "CHANGED=$(git diff --name-only ${{ steps.set_vars.outputs.base_sha }}..${{ steps.set_vars.outputs.head_sha }} | tr '\n' ',')" >> $GITHUB_ENV
 
       - name: Check for code changes
         id: check_changes
