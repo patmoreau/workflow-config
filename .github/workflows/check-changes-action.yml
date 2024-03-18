@@ -27,21 +27,20 @@ jobs:
         run: git fetch origin ${{ inputs.base_ref }}
 
       - name: Check for changes
-        id: diff_changes
-        run: echo "changed=$(git diff --name-only origin/${{ inputs.base_ref }}..HEAD | tr '\n' ',')" >> $GITHUB_ENV
+        run: echo "CHANGED=$(git diff --name-only origin/${{ inputs.base_ref }}..HEAD | tr '\n' ',')" >> $GITHUB_ENV
 
       - name: Check for code changes
         id: check_changes
         run: |
-          echo "$changed"
-          IFS=',' read -ra ADDR <<< "$changed"
+          echo "$CHANGED"
+          IFS=',' read -ra ADDR <<< "$CHANGED"
           for i in "${ADDR[@]}"; do
             if [[ $i =~ ${{ inputs.file_patterns }} ]]; then
-              echo "::set-output name=code_was_changed::true"
+              echo "code_was_changed=true" >> $GITHUB_OUTPUT
               exit 0
             fi
           done
-          echo "::set-output name=code_was_changed::false"
+          echo "code_was_changed=false" >> $GITHUB_OUTPUT
 
       - name: Use output
         run: |
