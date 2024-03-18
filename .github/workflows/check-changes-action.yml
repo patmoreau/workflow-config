@@ -10,7 +10,7 @@ on:
         type: string
     outputs:
       code_was_changed:
-        value: ${{ steps.check_changes.outputs.code_was_changed }}
+        value: ${{ jobs.check_changes.steps.check_changes.outputs.code_was_changed }}
         description: "Whether code was changed"
 
 jobs:
