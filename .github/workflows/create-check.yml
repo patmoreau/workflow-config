@@ -19,7 +19,7 @@ jobs:
     steps:
 
       - name: Display inputs
-        if: ${{ secrets.ACTIONS_STEP_DEBUG == 'true' }}
+        if: ${{ secrets.ACTIONS_STEP_DEBUG }} == 'true'
         run: |
           echo "code_was_changed: ${{ inputs.code_was_changed }}"
           echo "check_name: ${{ inputs.check_name }}"
