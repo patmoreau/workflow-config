@@ -16,7 +16,7 @@ env:
 
 jobs:
   check_changes:
-    uses: ./check-changes-action.yml@${{ github.sha }}
+    uses: ./check-changes-action.yml@create-check-workflow
     with:
       file_patterns: '.*'
 
@@ -28,7 +28,7 @@ jobs:
 
   create_check:
     needs: [check_changes, build]
-    uses: ./create-check.yml@${{ github.sha }}
+    uses: ./create-check.yml@$create-check-workflow
     with:
       code_was_changed: ${{ needs.check_changes.outputs.code_was_changed }}
       check_name: 'workflow-config-check'
