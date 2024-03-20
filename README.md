@@ -1,6 +1,6 @@
-# Renovate config
+# Workflow config
 
-Renovate config for all my repositories.
+Workflow configs for all my repositories.
 
 <!-- markdownlint-disable no-inline-html -->
 
