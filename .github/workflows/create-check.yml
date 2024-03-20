@@ -1,0 +1,53 @@
+name: create-check
+on:
+  workflow_call:
+    inputs:
+      code_was_changed:
+        required: true
+        type: string
+      check_name:
+        required: true
+        type: string
+      check_result:
+        required: true
+        type: string
+
+jobs:
+  create_check:
+    runs-on: ubuntu-latest
+    env:
+      ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG }}
+
+    steps:
+
+      - name: Display inputs
+        if: env.ACTIONS_STEP_DEBUG == 'true'
+        run: |
+          echo "code_was_changed: ${{ inputs.code_was_changed }}"
+          echo "check_name: ${{ inputs.check_name }}"
+          echo "check_result: ${{ inputs.check_result }}"
+
+      - name: Check conditions and set conclusion
+        id: check_conditions
+        run: |
+          if [[ "${{ inputs.code_was_changed }}" == "false" ]] || [[ "${{ inputs.check_result }}" == "success" ]]; then
+            echo "conclusion=success" >> $GITHUB_OUTPUT
+          else
+            echo "conclusion=failure" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create check run
+        id: create_check_run
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            const head_sha = context.payload.pull_request ? context.payload.pull_request.head.sha : context.sha;
+            const { data: { id: check_run_id } } = await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: '${{ inputs.check_name }}',
+              head_sha: head_sha,
+              status: 'completed',
+              conclusion: '${{ steps.check_conditions.outputs.conclusion }}'
+            });
+            return check_run_id;
