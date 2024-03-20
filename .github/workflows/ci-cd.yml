@@ -16,6 +16,21 @@ env:
 
 jobs:
   check_changes:
-    uses: patmoreau/renovate-config/.github/workflows/check-changes-action.yml@main
+    uses: ./check-changes-action.yml@${{ github.sha }}
     with:
       file_patterns: '.*'
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "Building the project"
+
+  create_check:
+    needs: [check_changes, build]
+    uses: ./create-check.yml@${{ github.sha }}
+    with:
+      code_was_changed: ${{ needs.check_changes.outputs.code_was_changed }}
+      check_name: 'workflow-config-check'
+      check_result: ${{ needs.build.result }}
+
