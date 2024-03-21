@@ -82,22 +82,21 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const github = context.repo;
-            const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
-            const tagName = 'v${{ env.VERSION }}';
-            const commitSha = process.env.GITHUB_SHA;
-            await octokit.git.createTag({
-              ...github,
-              tag: tagName,
-              message: 'Release ${tagName}',
-              object: commitSha,
-              type: 'commit'
-            });
-            await octokit.git.createRef({
-              ...github,
-              ref: `refs/tags/${tagName}`,
-              sha: commitSha
-            });
+            try {
+              await github.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: "tags/v${{ env.VERSION }}"
+              })
+            } catch (e) {
+              console.log("The v${{ env.VERSION }} tag doesn't exist yet: " + e)
+            }
+            await github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/v${{ env.VERSION }}",
+              sha: context.sha
+            })
 
   create_check:
     needs: [check_changes, build]
