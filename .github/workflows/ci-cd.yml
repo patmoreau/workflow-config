@@ -64,7 +64,7 @@ jobs:
         run: |
           echo "::`echo -n ${{ github.token }} | sha256sum | head -c 64`::"
 
-  build:
+  tagging:
     runs-on: ubuntu-latest
     needs: [check_changes, set-version]
     if: needs.check_changes.outputs.code_was_changed == 'true'
@@ -74,7 +74,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - run: echo "Building the project"
 
       - name: Tag version
         if:   github.event_name == 'push' && github.event.action != 'closed'
@@ -83,7 +82,7 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             try {
-              await github.git.deleteRef({
+              await github.rest.git.deleteRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 ref: "tags/v${{ env.VERSION }}"
@@ -91,7 +90,7 @@ jobs:
             } catch (e) {
               console.log("The v${{ env.VERSION }} tag doesn't exist yet: " + e)
             }
-            await github.git.createRef({
+            await github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: "refs/tags/v${{ env.VERSION }}",
@@ -99,10 +98,10 @@ jobs:
             })
 
   create_check:
-    needs: [check_changes, build]
+    needs: [check_changes, tagging]
     uses: ./.github/workflows/create-check.yml
     with:
       code_was_changed: ${{ needs.check_changes.outputs.code_was_changed }}
       check_name: 'workflow-config-check'
-      check_result: ${{ needs.build.result }}
+      check_result: ${{ needs.tagging.result }}
 
