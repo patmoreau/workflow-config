@@ -19,17 +19,16 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             try {
-              await github.rest.git.deleteRef({
+              await github.rest.git.getRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 ref: "tags/v${{ inputs.version }}"
               })
             } catch (e) {
-              console.log("The v${{ inputs.version }} tag doesn't exist yet: " + e)
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: "refs/tags/v${{ inputs.version }}",
+                sha: context.sha
+              })
             }
-            await github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/v${{ inputs.version }}",
-              sha: context.sha
-            })
