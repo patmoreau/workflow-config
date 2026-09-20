@@ -11,6 +11,16 @@ on:
       check_result:
         required: true
         type: string
+      enforce_when_unchanged:
+        description: >-
+          Honour an explicit failure in check_result even when code_was_changed
+          is false. Defaults to false, which keeps the historical behaviour of
+          concluding success whenever nothing changed. Set it to true when the
+          calling workflow has jobs that run regardless of whether code changed,
+          so their result must be reported.
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   create_check:
@@ -22,32 +32,50 @@ jobs:
 
       - name: Display inputs
         if: env.ACTIONS_STEP_DEBUG == 'true'
+        env:
+          CODE_WAS_CHANGED: ${{ inputs.code_was_changed }}
+          CHECK_NAME: ${{ inputs.check_name }}
+          CHECK_RESULT: ${{ inputs.check_result }}
+          ENFORCE_WHEN_UNCHANGED: ${{ inputs.enforce_when_unchanged }}
         run: |
-          echo "code_was_changed: ${{ inputs.code_was_changed }}"
-          echo "check_name: ${{ inputs.check_name }}"
-          echo "check_result: ${{ inputs.check_result }}"
+          echo "code_was_changed: $CODE_WAS_CHANGED"
+          echo "check_name: $CHECK_NAME"
+          echo "check_result: $CHECK_RESULT"
+          echo "enforce_when_unchanged: $ENFORCE_WHEN_UNCHANGED"
 
       - name: Check conditions and set conclusion
         id: check_conditions
+        env:
+          CODE_WAS_CHANGED: ${{ inputs.code_was_changed }}
+          CHECK_RESULT: ${{ inputs.check_result }}
+          ENFORCE_WHEN_UNCHANGED: ${{ inputs.enforce_when_unchanged }}
         run: |
-          if [[ "${{ inputs.code_was_changed }}" == "false" ]] || [[ "${{ inputs.check_result }}" == "success" ]]; then
-            echo "conclusion=success" >> $GITHUB_OUTPUT
+          if [[ "$CHECK_RESULT" == "success" ]]; then
+            conclusion=success
+          elif [[ "$CODE_WAS_CHANGED" == "false" && "$ENFORCE_WHEN_UNCHANGED" != "true" ]]; then
+            # Nothing changed and the caller did not ask for enforcement, so
+            # there is nothing to fail.
+            conclusion=success
           else
-            echo "conclusion=failure" >> $GITHUB_OUTPUT
+            conclusion=failure
           fi
+          echo "conclusion=$conclusion" >> "$GITHUB_OUTPUT"
 
       - name: Create check run
         id: create_check_run
         uses: actions/github-script@v9.0.0
+        env:
+          CHECK_NAME: ${{ inputs.check_name }}
+          CONCLUSION: ${{ steps.check_conditions.outputs.conclusion }}
         with:
           script: |
             const head_sha = context.payload.pull_request ? context.payload.pull_request.head.sha : context.sha;
             const { data: { id: check_run_id } } = await github.rest.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              name: '${{ inputs.check_name }}',
+              name: process.env.CHECK_NAME,
               head_sha: head_sha,
               status: 'completed',
-              conclusion: '${{ steps.check_conditions.outputs.conclusion }}'
+              conclusion: process.env.CONCLUSION
             });
             return check_run_id;
